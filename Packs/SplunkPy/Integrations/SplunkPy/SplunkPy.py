@@ -1317,7 +1317,7 @@ def get_fields_query_part(notable_data, prefix, fields, raw_dict=None):
 
     """
     if not raw_dict:
-        raw_dict = rawToDict(notable_data.get('_raw'))
+        raw_dict = rawToDict(notable_data.get('_raw', ''))
     raw_list = []
     for field in fields:
         raw_list += argToList(notable_data.get(field, "")) + argToList(raw_dict.get(field, ""))
@@ -1346,7 +1346,7 @@ def drilldown_enrichment(service, notable_data, num_enrichment_events):
     search = notable_data.get("drilldown_search", "")
 
     if search:
-        raw_dict = rawToDict(notable_data.get("_raw"))
+        raw_dict = rawToDict(notable_data.get("_raw", ""))
         search = build_drilldown_search(notable_data, search, raw_dict)
         status, earliest_offset, latest_offset = get_drilldown_timeframe(notable_data, raw_dict)
         if status:
@@ -1411,7 +1411,7 @@ def get_notable_field_and_value(raw_field, notable_data, raw=None):
 
     """
     if not raw:
-        raw = rawToDict(notable_data.get('_raw'))
+        raw = rawToDict(notable_data.get('_raw', ''))
     for field in notable_data:
         if field in raw_field:
             return field, notable_data[field]
@@ -1421,11 +1421,11 @@ def get_notable_field_and_value(raw_field, notable_data, raw=None):
     raise Exception('Failed building drilldown search query. field {} was not found in the notable.'.format(raw_field))
 
 
-def get_drilldown_timeframe(notable, raw):
+def get_drilldown_timeframe(notable_data, raw):
     """ Sets the drilldown search timeframe data.
 
     Args:
-        notable (dict): The notable
+        notable_data (dict): The notable
         raw (dict): The raw dict
 
     Returns:
@@ -1435,8 +1435,8 @@ def get_drilldown_timeframe(notable, raw):
 
     """
     task_status = True
-    earliest_offset = notable.get("drilldown_earliest", "")
-    latest_offset = notable.get("drilldown_latest", "")
+    earliest_offset = notable_data.get("drilldown_earliest", "")
+    latest_offset = notable_data.get("drilldown_latest", "")
     info_min_time = raw.get(INFO_MIN_TIME, "")
     info_max_time = raw.get(INFO_MAX_TIME, "")
 
